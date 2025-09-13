@@ -868,12 +868,24 @@
             }
         }
 
+        // Função para forçar carregamento dos dados
+        function forceLoadData() {
+            console.log('Forçando carregamento dos dados...');
+            loadData();
+        }
+
         // Inicializar quando a página carregar
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página carregada, inicializando...');
+            
             loadGenres();
-            loadData();
             loadInsights();
             loadModelComparison();
+            
+            // Carregar dados com delay para garantir que os elementos existam
+            setTimeout(() => {
+                loadData();
+            }, 500);
             
             // Configurar scroll spy para navegação ativa
             window.addEventListener('scroll', function() {
@@ -895,6 +907,9 @@
                 }
             });
         });
+
+        // Expor função globalmente para debug
+        window.forceLoadData = forceLoadData;
     </script>
 </body>
 </html>
