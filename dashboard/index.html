@@ -376,6 +376,10 @@
                         <i class="fas fa-play me-1"></i>
                         Executar Análise
                     </button>
+                    <button class="btn btn-outline-secondary ms-2" onclick="debugData()">
+                        <i class="fas fa-bug me-1"></i>
+                        Debug
+                    </button>
                 </nav>
             </div>
         </div>
@@ -823,9 +827,29 @@
             loadData();
         }
 
+        // Função para verificar se Chart.js está carregado
+        function waitForChartJS() {
+            return new Promise((resolve) => {
+                if (typeof Chart !== 'undefined') {
+                    resolve();
+                } else {
+                    const checkChart = setInterval(() => {
+                        if (typeof Chart !== 'undefined') {
+                            clearInterval(checkChart);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
         // Inicializar quando a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             console.log('Página carregada, inicializando...');
+            
+            // Aguardar Chart.js carregar
+            await waitForChartJS();
+            console.log('Chart.js carregado');
             
             loadGenres();
             loadInsights();
@@ -833,8 +857,9 @@
             
             // Carregar dados com delay para garantir que os elementos existam
             setTimeout(() => {
+                console.log('Iniciando carregamento de dados...');
                 loadData();
-            }, 500);
+            }, 1000);
             
             // Configurar scroll spy para navegação ativa
             window.addEventListener('scroll', function() {
@@ -857,8 +882,25 @@
             });
         });
 
-        // Expor função globalmente para debug
+        // Função de debug
+        function debugData() {
+            console.log('=== DEBUG INFO ===');
+            console.log('Chart.js disponível:', typeof Chart !== 'undefined');
+            console.log('Dados carregados:', window.dashboardData);
+            console.log('DataLoader disponível:', window.dataLoader);
+            console.log('Elementos DOM:');
+            console.log('- clusterChart:', document.getElementById('clusterChart'));
+            console.log('- modelChart:', document.getElementById('modelChart'));
+            console.log('- cluster-details:', document.getElementById('cluster-details'));
+            
+            // Testar carregamento manual
+            console.log('Testando carregamento manual...');
+            loadData();
+        }
+
+        // Expor funções globalmente para debug
         window.forceLoadData = forceLoadData;
+        window.debugData = debugData;
     </script>
 </body>
 </html>

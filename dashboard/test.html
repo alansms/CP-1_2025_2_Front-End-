@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Carregamento de Dados</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        pre { background: #f8f9fa; padding: 10px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Teste de Carregamento de Dados</h1>
+    
+    <div class="test-section">
+        <h2>1. Teste de Conectividade</h2>
+        <button onclick="testConnectivity()">Testar Conectividade</button>
+        <div id="connectivity-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Teste de Carregamento de CSVs</h2>
+        <button onclick="testCSVLoading()">Carregar CSVs</button>
+        <div id="csv-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Teste de Parsing</h2>
+        <button onclick="testParsing()">Testar Parsing</button>
+        <div id="parsing-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Dados Carregados</h2>
+        <div id="data-display"></div>
+    </div>
+
+    <script>
+        const baseUrl = 'https://raw.githubusercontent.com/alansms/CP-1_2025_2_Front-End-/main/arquivos_externos/';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'loading';
+            element.innerHTML = `<div class="${className}">${message}</div>`;
+            console.log(message);
+        }
+        
+        async function testConnectivity() {
+            log('connectivity-result', '🔄 Testando conectividade...', 'loading');
+            
+            try {
+                const response = await fetch(baseUrl + 'cluster_summary.csv');
+                if (response.ok) {
+                    log('connectivity-result', '✅ Conectividade OK! Status: ' + response.status, 'success');
+                } else {
+                    log('connectivity-result', '❌ Erro de conectividade! Status: ' + response.status, 'error');
+                }
+            } catch (error) {
+                log('connectivity-result', '❌ Erro de rede: ' + error.message, 'error');
+            }
+        }
+        
+        async function testCSVLoading() {
+            log('csv-result', '🔄 Carregando CSVs...', 'loading');
+            
+            try {
+                // Testar cluster_summary.csv
+                const clusterResponse = await fetch(baseUrl + 'cluster_summary.csv');
+                if (!clusterResponse.ok) {
+                    throw new Error(`Erro ao carregar clusters: ${clusterResponse.status}`);
+                }
+                const clusterText = await clusterResponse.text();
+                
+                // Testar movies
+                const moviesResponse = await fetch(baseUrl + 'imdb_top250_with_clusters.csv');
+                if (!moviesResponse.ok) {
+                    throw new Error(`Erro ao carregar filmes: ${moviesResponse.status}`);
+                }
+                const moviesText = await moviesResponse.text();
+                
+                // Testar comparison
+                const comparisonResponse = await fetch(baseUrl + 'model_comparison_summary.csv');
+                if (!comparisonResponse.ok) {
+                    throw new Error(`Erro ao carregar comparação: ${comparisonResponse.status}`);
+                }
+                const comparisonText = await comparisonResponse.text();
+                
+                log('csv-result', `
+                    ✅ Todos os CSVs carregados com sucesso!<br>
+                    📊 Clusters: ${clusterText.split('\n').length - 1} linhas<br>
+                    🎬 Filmes: ${moviesText.split('\n').length - 1} linhas<br>
+                    📈 Comparação: ${comparisonText.split('\n').length - 1} linhas
+                `, 'success');
+                
+                // Armazenar dados para teste de parsing
+                window.testData = {
+                    clusters: clusterText,
+                    movies: moviesText,
+                    comparison: comparisonText
+                };
+                
+            } catch (error) {
+                log('csv-result', '❌ Erro ao carregar CSVs: ' + error.message, 'error');
+            }
+        }
+        
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const headers = lines[0].split(';');
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = lines[i].split(';');
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header.trim()] = values[index] ? values[index].trim() : '';
+                    });
+                    data.push(row);
+                }
+            }
+            
+            return data;
+        }
+        
+        function testParsing() {
+            if (!window.testData) {
+                log('parsing-result', '❌ Execute primeiro o teste de carregamento de CSVs', 'error');
+                return;
+            }
+            
+            log('parsing-result', '🔄 Testando parsing...', 'loading');
+            
+            try {
+                const clusters = parseCSV(window.testData.clusters);
+                const movies = parseCSV(window.testData.movies);
+                const comparison = parseCSV(window.testData.comparison);
+                
+                log('parsing-result', `
+                    ✅ Parsing realizado com sucesso!<br>
+                    📊 Clusters: ${clusters.length} registros<br>
+                    🎬 Filmes: ${movies.length} registros<br>
+                    📈 Comparação: ${comparison.length} registros
+                `, 'success');
+                
+                // Exibir dados
+                displayData({ clusters, movies, comparison });
+                
+            } catch (error) {
+                log('parsing-result', '❌ Erro no parsing: ' + error.message, 'error');
+            }
+        }
+        
+        function displayData(data) {
+            const container = document.getElementById('data-display');
+            
+            let html = '<h3>📊 Dados Carregados:</h3>';
+            
+            // Clusters
+            html += '<h4>Clusters:</h4><pre>';
+            data.clusters.forEach(cluster => {
+                html += `Cluster ${cluster.cluster}: ${cluster.Num_Filmes} filmes, ${cluster.Genero_Principal}, Rating: ${cluster.Rating_Medio}\n`;
+            });
+            html += '</pre>';
+            
+            // Primeiros 5 filmes
+            html += '<h4>Primeiros 5 Filmes:</h4><pre>';
+            data.movies.slice(0, 5).forEach(movie => {
+                html += `${movie.title_en} (${movie.year}) - Rating: ${movie.rating} - Cluster: ${movie.cluster}\n`;
+            });
+            html += '</pre>';
+            
+            // Comparação
+            html += '<h4>Comparação de Modelos:</h4><pre>';
+            data.comparison.forEach(model => {
+                html += `${model.Modelo}: Silhouette Score = ${model['Silhouette Score']}\n`;
+            });
+            html += '</pre>';
+            
+            container.innerHTML = html;
+        }
+        
+        // Teste automático ao carregar a página
+        window.addEventListener('load', function() {
+            console.log('Página de teste carregada');
+            testConnectivity();
+        });
+    </script>
+</body>
+</html>

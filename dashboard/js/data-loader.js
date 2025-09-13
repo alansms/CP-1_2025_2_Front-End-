@@ -180,52 +180,67 @@ function showDataError() {
 
 // Função para criar gráfico de clusters
 function createClusterChart(data) {
+    console.log('Criando gráfico de clusters...', data);
+    
     const ctx = document.getElementById('clusterChart');
     if (!ctx) {
         console.error('Elemento clusterChart não encontrado');
         return;
     }
     
+    console.log('Canvas encontrado:', ctx);
+    
     // Destruir gráfico existente se houver
     if (window.clusterChartInstance) {
+        console.log('Destruindo gráfico existente...');
         window.clusterChartInstance.destroy();
     }
     
-    if (data && data.clusters) {
+    if (data && data.clusters && data.clusters.length > 0) {
+        console.log('Dados de clusters disponíveis:', data.clusters);
+        
         const labels = data.clusters.map(c => `Cluster ${c.cluster}`);
         const counts = data.clusters.map(c => parseInt(c.Num_Filmes));
         
-        window.clusterChartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: counts,
-                    backgroundColor: [
-                        '#2563eb',
-                        '#0ea5e9',
-                        '#059669',
-                        '#d97706',
-                        '#dc2626'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
+        console.log('Labels:', labels);
+        console.log('Counts:', counts);
+        
+        try {
+            window.clusterChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: [
+                            '#2563eb',
+                            '#0ea5e9',
+                            '#059669',
+                            '#d97706',
+                            '#dc2626'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
                     }
                 }
-            }
-        });
-        
-        console.log('Gráfico de clusters criado com sucesso');
+            });
+            
+            console.log('✅ Gráfico de clusters criado com sucesso');
+        } catch (error) {
+            console.error('❌ Erro ao criar gráfico de clusters:', error);
+        }
     } else {
-        console.error('Dados de clusters não disponíveis');
+        console.error('❌ Dados de clusters não disponíveis ou vazios');
+        ctx.innerHTML = '<div class="text-center p-4"><p class="text-muted">Dados não disponíveis</p></div>';
     }
 }
 
