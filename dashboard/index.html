@@ -303,6 +303,35 @@
             box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
         }
 
+        /* Sections */
+        .section {
+            margin-bottom: 4rem;
+            padding-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Active navigation */
+        .nav-links a.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -316,6 +345,10 @@
             }
             
             .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
                 font-size: 1.5rem;
             }
             
@@ -335,10 +368,10 @@
                     <span class="logo-text">CP1 Dashboard</span>
                 </a>
                 <nav class="nav-links">
-                    <a href="#overview">Visão Geral</a>
-                    <a href="#clusters">Clusters</a>
-                    <a href="#comparison">Comparação</a>
-                    <a href="#insights">Insights</a>
+                    <a href="#overview" onclick="scrollToSection('overview')">Visão Geral</a>
+                    <a href="#clusters" onclick="scrollToSection('clusters')">Clusters</a>
+                    <a href="#comparison" onclick="scrollToSection('comparison')">Comparação</a>
+                    <a href="#insights" onclick="scrollToSection('insights')">Insights</a>
                     <button class="btn btn-execute" onclick="executeAnalysis()">
                         <i class="fas fa-play me-1"></i>
                         Executar Análise
@@ -351,150 +384,233 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="container">
-            <!-- Page Header -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h1 class="page-title">Análise de Clusterização IMDb</h1>
-                    <p class="page-subtitle">Projeto CP1 Front End - Análise dos 250 melhores filmes do IMDb usando técnicas de Web Scraping e Clusterização KMeans</p>
-                    
-                    <div class="info-badges">
-                        <div class="info-badge">
-                            <i class="fas fa-user"></i>
-                            <span>Alan de Souza Maximiano da Silva</span>
-                        </div>
-                        <div class="info-badge">
-                            <i class="fas fa-id-card"></i>
-                            <span>RM: 557088</span>
-                        </div>
-                        <div class="info-badge">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>2TIAPY-2025</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Metrics -->
-            <div class="row mb-4">
-                <div class="col-md-3 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value" id="total-movies">250</div>
-                        <div class="metric-label">Filmes Analisados</div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value" id="total-clusters">5</div>
-                        <div class="metric-label">Clusters Identificados</div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value" id="silhouette-score">0.037</div>
-                        <div class="metric-label">Silhouette Score</div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                    <div class="metric-card">
-                        <div class="metric-value" id="best-model">Modelo 1</div>
-                        <div class="metric-label">Melhor Modelo</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="filter-section">
-                <h5 class="filter-title">
-                    <i class="fas fa-filter me-2"></i>
-                    Filtrar Filmes
-                </h5>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Cluster</label>
-                        <select class="form-select" id="cluster-filter">
-                            <option value="">Todos os clusters</option>
-                            <option value="0">Cluster 0</option>
-                            <option value="1">Cluster 1</option>
-                            <option value="2">Cluster 2</option>
-                            <option value="3">Cluster 3</option>
-                            <option value="4">Cluster 4</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Gênero</label>
-                        <select class="form-select" id="genre-filter">
-                            <option value="">Todos os gêneros</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Rating Mínimo</label>
-                        <input type="number" class="form-control" id="rating-filter" min="0" max="10" step="0.1" placeholder="Ex: 8.0">
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label">Buscar Filme</label>
-                        <input type="text" class="form-control" id="search-filter" placeholder="Nome do filme...">
-                    </div>
-                </div>
-                <div class="row">
+            <!-- Visão Geral Section -->
+            <section id="overview" class="section">
+                <div class="row mb-4">
                     <div class="col-12">
-                        <button class="btn btn-primary me-2" onclick="filterMovies()">
-                            <i class="fas fa-search me-1"></i>
-                            Filtrar
-                        </button>
-                        <button class="btn btn-outline-secondary" onclick="clearFilters()">
-                            <i class="fas fa-times me-1"></i>
-                            Limpar Filtros
-                        </button>
+                        <h1 class="page-title">Análise de Clusterização IMDb</h1>
+                        <p class="page-subtitle">Projeto CP1 Front End - Análise dos 250 melhores filmes do IMDb usando técnicas de Web Scraping e Clusterização KMeans</p>
+                        
+                        <div class="info-badges">
+                            <div class="info-badge">
+                                <i class="fas fa-user"></i>
+                                <span>Alan de Souza Maximiano da Silva</span>
+                            </div>
+                            <div class="info-badge">
+                                <i class="fas fa-id-card"></i>
+                                <span>RM: 557088</span>
+                            </div>
+                            <div class="info-badge">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>2TIAPY-2025</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Charts -->
-            <div class="row mb-4">
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">
-                                <i class="fas fa-chart-pie"></i>
-                                Distribuição dos Clusters
-                            </h5>
+                <!-- Metrics -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="total-movies">250</div>
+                            <div class="metric-label">Filmes Analisados</div>
                         </div>
-                        <div class="card-body">
-                            <canvas id="clusterChart"></canvas>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="total-clusters">5</div>
+                            <div class="metric-label">Clusters Identificados</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="silhouette-score">0.037</div>
+                            <div class="metric-label">Silhouette Score</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="metric-card">
+                            <div class="metric-value" id="best-model">Modelo 1</div>
+                            <div class="metric-label">Melhor Modelo</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">
-                                <i class="fas fa-chart-line"></i>
-                                Comparação de Modelos
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="modelChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </section>
 
-            <!-- Cluster Details -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">
-                                <i class="fas fa-list"></i>
-                                Detalhes dos Clusters
-                            </h5>
+            <!-- Clusters Section -->
+            <section id="clusters" class="section">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-pie me-2"></i>
+                            Análise dos Clusters
+                        </h2>
+                        <p class="section-subtitle">Distribuição e características dos 5 clusters identificados</p>
+                    </div>
+                </div>
+
+                <!-- Cluster Chart -->
+                <div class="row mb-4">
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    <i class="fas fa-chart-pie"></i>
+                                    Distribuição dos Clusters
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="clusterChart"></canvas>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div id="cluster-details"></div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    <i class="fas fa-list"></i>
+                                    Detalhes dos Clusters
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="cluster-details"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Filters -->
+                <div class="filter-section">
+                    <h5 class="filter-title">
+                        <i class="fas fa-filter me-2"></i>
+                        Filtrar Filmes por Cluster
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Cluster</label>
+                            <select class="form-select" id="cluster-filter">
+                                <option value="">Todos os clusters</option>
+                                <option value="0">Cluster 0</option>
+                                <option value="1">Cluster 1</option>
+                                <option value="2">Cluster 2</option>
+                                <option value="3">Cluster 3</option>
+                                <option value="4">Cluster 4</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Gênero</label>
+                            <select class="form-select" id="genre-filter">
+                                <option value="">Todos os gêneros</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Rating Mínimo</label>
+                            <input type="number" class="form-control" id="rating-filter" min="0" max="10" step="0.1" placeholder="Ex: 8.0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Buscar Filme</label>
+                            <input type="text" class="form-control" id="search-filter" placeholder="Nome do filme...">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-primary me-2" onclick="filterMovies()">
+                                <i class="fas fa-search me-1"></i>
+                                Filtrar
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                                <i class="fas fa-times me-1"></i>
+                                Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Comparação Section -->
+            <section id="comparison" class="section">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Comparação de Modelos
+                        </h2>
+                        <p class="section-subtitle">Análise comparativa entre Modelo 1 (TF-IDF) e Modelo 2 (Todas Features)</p>
+                    </div>
+                </div>
+
+                <!-- Model Comparison Chart -->
+                <div class="row mb-4">
+                    <div class="col-lg-8 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    Comparação de Modelos
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="modelChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    <i class="fas fa-trophy"></i>
+                                    Resultados
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="model-comparison-results"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Insights Section -->
+            <section id="insights" class="section">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="section-title">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            Insights e Conclusões
+                        </h2>
+                        <p class="section-subtitle">Principais descobertas e recomendações da análise</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    <i class="fas fa-chart-bar"></i>
+                                    Principais Descobertas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="insights-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">
+                                    <i class="fas fa-rocket"></i>
+                                    Aplicações Práticas
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="applications-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -631,10 +747,153 @@
             });
         }
 
+        // Função para scroll suave para seções
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Atualizar navegação ativa
+                updateActiveNavigation(sectionId);
+            }
+        }
+
+        // Função para atualizar navegação ativa
+        function updateActiveNavigation(activeId) {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${activeId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Função para carregar insights
+        function loadInsights() {
+            const insightsContent = document.getElementById('insights-content');
+            const applicationsContent = document.getElementById('applications-content');
+            
+            if (insightsContent) {
+                insightsContent.innerHTML = `
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>5 clusters distintos</strong> identificados nos 250 filmes analisados
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Modelo 2 (Todas Features)</strong> apresentou melhor performance
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Silhouette Score de 0.319</strong> indica clusters bem definidos
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Gêneros específicos</strong> tendem a se agrupar em clusters similares
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <strong>Filmes clássicos</strong> formam clusters com ratings mais altos
+                        </li>
+                    </ul>
+                `;
+            }
+            
+            if (applicationsContent) {
+                applicationsContent.innerHTML = `
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Sistema de Recomendação:</strong> Sugerir filmes similares baseado no cluster
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Análise de Mercado:</strong> Identificar tendências por gênero e época
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Curadoria de Conteúdo:</strong> Organizar catálogos por similaridade
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Previsão de Sucesso:</strong> Estimar performance de novos filmes
+                        </li>
+                        <li class="mb-3">
+                            <i class="fas fa-lightbulb text-warning me-2"></i>
+                            <strong>Segmentação de Audiência:</strong> Personalizar experiências por cluster
+                        </li>
+                    </ul>
+                `;
+            }
+        }
+
+        // Função para carregar resultados da comparação
+        function loadModelComparison() {
+            const resultsContent = document.getElementById('model-comparison-results');
+            
+            if (resultsContent) {
+                resultsContent.innerHTML = `
+                    <div class="mb-3">
+                        <h6 class="text-primary">🏆 Melhor Modelo</h6>
+                        <p class="mb-2"><strong>Modelo 2 (Todas Features)</strong></p>
+                        <small class="text-muted">Silhouette Score: 0.319</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-secondary">📊 Comparação</h6>
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Modelo 1 (TF-IDF):</small>
+                            <small>0.037</small>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Modelo 2 (Todas):</small>
+                            <small>0.319</small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-success">✅ Vantagens</h6>
+                        <ul class="list-unstyled small">
+                            <li>• Melhor separação</li>
+                            <li>• Clusters mais coesos</li>
+                            <li>• Features complementares</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
         // Inicializar quando a página carregar
         document.addEventListener('DOMContentLoaded', function() {
             loadGenres();
             loadData();
+            loadInsights();
+            loadModelComparison();
+            
+            // Configurar scroll spy para navegação ativa
+            window.addEventListener('scroll', function() {
+                const sections = ['overview', 'clusters', 'comparison', 'insights'];
+                let current = '';
+                
+                sections.forEach(section => {
+                    const element = document.getElementById(section);
+                    if (element) {
+                        const rect = element.getBoundingClientRect();
+                        if (rect.top <= 100 && rect.bottom >= 100) {
+                            current = section;
+                        }
+                    }
+                });
+                
+                if (current) {
+                    updateActiveNavigation(current);
+                }
+            });
         });
     </script>
 </body>
