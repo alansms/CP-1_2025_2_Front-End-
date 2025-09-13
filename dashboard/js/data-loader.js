@@ -11,30 +11,44 @@ class DataLoader {
 
     async loadData() {
         try {
-            console.log('Loading data from GitHub...');
+            console.log('Carregando dados reais do GitHub...');
             
             // Load movies data
+            console.log('Carregando dados dos filmes...');
             const moviesResponse = await fetch(`${this.baseUrl}imdb_top250_with_clusters.csv`);
+            if (!moviesResponse.ok) {
+                throw new Error(`Erro ao carregar filmes: ${moviesResponse.status}`);
+            }
             const moviesText = await moviesResponse.text();
             this.data.movies = this.parseCSV(moviesText);
+            console.log('Filmes carregados:', this.data.movies.length);
             
             // Load cluster summary
+            console.log('Carregando resumo dos clusters...');
             const clustersResponse = await fetch(`${this.baseUrl}cluster_summary.csv`);
+            if (!clustersResponse.ok) {
+                throw new Error(`Erro ao carregar clusters: ${clustersResponse.status}`);
+            }
             const clustersText = await clustersResponse.text();
             this.data.clusters = this.parseCSV(clustersText);
+            console.log('Clusters carregados:', this.data.clusters.length);
             
             // Load model comparison
+            console.log('Carregando comparação de modelos...');
             const comparisonResponse = await fetch(`${this.baseUrl}model_comparison_summary.csv`);
+            if (!comparisonResponse.ok) {
+                throw new Error(`Erro ao carregar comparação: ${comparisonResponse.status}`);
+            }
             const comparisonText = await comparisonResponse.text();
             this.data.comparison = this.parseCSV(comparisonText);
+            console.log('Comparação carregada:', this.data.comparison.length);
             
-            console.log('Data loaded successfully:', this.data);
+            console.log('Todos os dados reais carregados com sucesso!');
             return this.data;
             
         } catch (error) {
-            console.error('Error loading data:', error);
-            // Fallback to static data
-            return this.getStaticData();
+            console.error('Erro ao carregar dados reais:', error);
+            throw error; // Re-throw para não usar dados simulados
         }
     }
 
@@ -57,60 +71,6 @@ class DataLoader {
         return data;
     }
 
-    getStaticData() {
-        return {
-            movies: [
-                {
-                    title_en: "The Shawshank Redemption",
-                    title_pt: "Um Sonho de Liberdade",
-                    year: "1994",
-                    rating: "9.3",
-                    genre: "Epic",
-                    cluster: "1"
-                },
-                {
-                    title_en: "The Godfather",
-                    title_pt: "O Poderoso Chefão",
-                    year: "1972",
-                    rating: "9.2",
-                    genre: "Epic",
-                    cluster: "3"
-                }
-                // Add more static data as needed
-            ],
-            clusters: [
-                {
-                    cluster: "0",
-                    Num_Filmes: "5",
-                    Genero_Principal: "Action Epic",
-                    Rating_Medio: "8.88",
-                    Ano_Medio: "1996"
-                },
-                {
-                    cluster: "1",
-                    Num_Filmes: "6",
-                    Genero_Principal: "Epic",
-                    Rating_Medio: "8.82",
-                    Ano_Medio: "1986"
-                }
-                // Add more cluster data
-            ],
-            comparison: [
-                {
-                    Modelo: "Modelo 1 (TF-IDF)",
-                    "Silhouette Score": "0.037",
-                    "Calinski-Harabasz Score": "1.612",
-                    "Davies-Bouldin Score": "2.450"
-                },
-                {
-                    Modelo: "Modelo 2 (Todas Features)",
-                    "Silhouette Score": "0.319",
-                    "Calinski-Harabasz Score": "24.536",
-                    "Davies-Bouldin Score": "0.934"
-                }
-            ]
-        };
-    }
 
     getClusterData(clusterId) {
         if (!this.data.movies) return [];
@@ -148,10 +108,18 @@ class DataLoader {
 // Função global para carregar dados
 async function loadData() {
     try {
+        console.log('Iniciando carregamento dos dados reais...');
         const dataLoader = new DataLoader();
         const data = await dataLoader.loadData();
         
-        // Criar gráficos
+        console.log('Dados carregados:', data);
+        
+        // Verificar se os dados foram carregados corretamente
+        if (!data || (!data.clusters && !data.movies && !data.comparison)) {
+            throw new Error('Dados não foram carregados corretamente');
+        }
+        
+        // Criar gráficos apenas com dados reais
         createClusterChart(data);
         createModelChart(data);
         displayClusterDetails(data);
@@ -160,50 +128,54 @@ async function loadData() {
         window.dashboardData = data;
         window.dataLoader = dataLoader;
         
-        console.log('Dados carregados com sucesso:', data);
+        console.log('Dados reais carregados e exibidos com sucesso!');
+        
     } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        // Usar dados de fallback
-        loadFallbackData();
+        console.error('Erro ao carregar dados reais:', error);
+        // Mostrar mensagem de erro em vez de dados simulados
+        showDataError();
     }
 }
 
-// Função para carregar dados de fallback
-function loadFallbackData() {
-    console.log('Carregando dados de fallback...');
+// Função para mostrar erro quando dados não carregam
+function showDataError() {
+    const clusterContainer = document.getElementById('cluster-details');
+    const clusterChart = document.getElementById('clusterChart');
+    const modelChart = document.getElementById('modelChart');
     
-    const fallbackData = {
-        clusters: [
-            { cluster: "0", Num_Filmes: "50", Genero_Principal: "Action Epic", Rating_Medio: "8.88", Ano_Medio: "1996" },
-            { cluster: "1", Num_Filmes: "45", Genero_Principal: "Epic", Rating_Medio: "8.82", Ano_Medio: "1986" },
-            { cluster: "2", Num_Filmes: "55", Genero_Principal: "Drama", Rating_Medio: "8.75", Ano_Medio: "2000" },
-            { cluster: "3", Num_Filmes: "40", Genero_Principal: "Crime", Rating_Medio: "8.65", Ano_Medio: "1990" },
-            { cluster: "4", Num_Filmes: "60", Genero_Principal: "Thriller", Rating_Medio: "8.55", Ano_Medio: "2005" }
-        ],
-        movies: [
-            { title_en: "The Shawshank Redemption", title_pt: "Um Sonho de Liberdade", year: "1994", rating: "9.3", genre: "Drama", cluster: "0" },
-            { title_en: "The Godfather", title_pt: "O Poderoso Chefão", year: "1972", rating: "9.2", genre: "Crime", cluster: "1" },
-            { title_en: "The Dark Knight", title_pt: "O Cavaleiro das Trevas", year: "2008", rating: "9.0", genre: "Action", cluster: "2" },
-            { title_en: "Pulp Fiction", title_pt: "Pulp Fiction", year: "1994", rating: "8.9", genre: "Crime", cluster: "3" },
-            { title_en: "Forrest Gump", title_pt: "Forrest Gump", year: "1994", rating: "8.8", genre: "Drama", cluster: "4" }
-        ],
-        comparison: [
-            { Modelo: "Modelo 1 (TF-IDF)", "Silhouette Score": "0.037", "Calinski-Harabasz Score": "1.612", "Davies-Bouldin Score": "2.450" },
-            { Modelo: "Modelo 2 (Todas Features)", "Silhouette Score": "0.319", "Calinski-Harabasz Score": "24.536", "Davies-Bouldin Score": "0.934" }
-        ]
-    };
+    if (clusterContainer) {
+        clusterContainer.innerHTML = `
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">⚠️ Dados não disponíveis</h4>
+                <p>Os dados dos clusters não puderam ser carregados. Verifique sua conexão com a internet e tente novamente.</p>
+                <hr>
+                <p class="mb-0">
+                    <button class="btn btn-primary" onclick="loadData()">
+                        <i class="fas fa-refresh me-1"></i>
+                        Tentar Novamente
+                    </button>
+                </p>
+            </div>
+        `;
+    }
     
-    // Criar gráficos com dados de fallback
-    createClusterChart(fallbackData);
-    createModelChart(fallbackData);
-    displayClusterDetails(fallbackData);
+    if (clusterChart) {
+        clusterChart.innerHTML = `
+            <div class="text-center p-4">
+                <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                <p class="text-muted">Gráfico não disponível</p>
+            </div>
+        `;
+    }
     
-    // Armazenar dados globalmente
-    window.dashboardData = fallbackData;
-    window.dataLoader = new DataLoader();
-    window.dataLoader.data = fallbackData;
-    
-    console.log('Dados de fallback carregados');
+    if (modelChart) {
+        modelChart.innerHTML = `
+            <div class="text-center p-4">
+                <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                <p class="text-muted">Gráfico não disponível</p>
+            </div>
+        `;
+    }
 }
 
 // Função para criar gráfico de clusters
@@ -375,7 +347,7 @@ function displayClusterDetails(data) {
 // Função para filtrar filmes com dados reais
 function filterMoviesReal() {
     if (!window.dashboardData || !window.dashboardData.movies) {
-        filterMovies(); // Fallback para dados mock
+        alert('Dados não disponíveis. Por favor, aguarde o carregamento dos dados reais.');
         return;
     }
     

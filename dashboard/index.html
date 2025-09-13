@@ -666,21 +666,11 @@
 
         // Função para filtrar filmes
         function filterMovies() {
-            // Usar dados reais se disponíveis, senão usar mock
+            // Usar apenas dados reais
             if (typeof filterMoviesReal === 'function') {
                 filterMoviesReal();
             } else {
-                const cluster = document.getElementById('cluster-filter').value;
-                const genre = document.getElementById('genre-filter').value;
-                const rating = document.getElementById('rating-filter').value;
-                const search = document.getElementById('search-filter').value.toLowerCase();
-                
-                // Simular resultados filtrados
-                const modal = new bootstrap.Modal(document.getElementById('movieModal'));
-                modal.show();
-                
-                const filteredMovies = generateMockMovies(10);
-                displayFilteredMovies(filteredMovies);
+                alert('Sistema de filtros não disponível. Aguarde o carregamento dos dados reais.');
             }
         }
 
@@ -692,47 +682,6 @@
             document.getElementById('search-filter').value = '';
         }
 
-        // Função para gerar filmes mock
-        function generateMockMovies(count) {
-            const movies = [];
-            const titles = [
-                'The Shawshank Redemption', 'The Godfather', 'The Dark Knight',
-                'Pulp Fiction', 'Forrest Gump', 'Inception', 'The Matrix',
-                'Goodfellas', 'The Lord of the Rings', 'Fight Club'
-            ];
-            const genres = ['Drama', 'Action', 'Crime', 'Thriller', 'Adventure'];
-            
-            for (let i = 0; i < count; i++) {
-                movies.push({
-                    title: titles[i % titles.length],
-                    year: 1990 + Math.floor(Math.random() * 30),
-                    rating: (7 + Math.random() * 3).toFixed(1),
-                    genre: genres[Math.floor(Math.random() * genres.length)],
-                    cluster: Math.floor(Math.random() * 5)
-                });
-            }
-            
-            return movies;
-        }
-
-        // Função para exibir filmes filtrados
-        function displayFilteredMovies(movies) {
-            const container = document.getElementById('filtered-movies');
-            container.innerHTML = '';
-            
-            movies.forEach(movie => {
-                const movieCard = document.createElement('div');
-                movieCard.className = 'movie-card';
-                movieCard.innerHTML = `
-                    <div class="movie-title">${movie.title}</div>
-                    <div class="movie-details">
-                        ${movie.year} • ${movie.genre} • Rating: ${movie.rating}
-                    </div>
-                    <span class="movie-cluster">Cluster ${movie.cluster}</span>
-                `;
-                container.appendChild(movieCard);
-            });
-        }
 
         // Carregar gêneros no filtro
         function loadGenres() {
