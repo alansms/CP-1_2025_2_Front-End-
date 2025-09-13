@@ -1,0 +1,20 @@
+[build]
+  publish = "dashboard"
+  command = "echo 'Static site - no build needed'"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production]
+  command = "echo 'Production build'"
+
+[context.deploy-preview]
+  command = "echo 'Deploy preview'"
+
+[context.branch-deploy]
+  command = "echo 'Branch deploy'"

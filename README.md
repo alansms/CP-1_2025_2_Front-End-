@@ -129,12 +129,42 @@ pip install pandas numpy matplotlib seaborn plotly wordcloud scikit-learn nltk r
 - **Análise Comparativa:** Avaliação de diferentes abordagens de modelagem
 - **Interpretação de Resultados:** Extração de insights de dados não estruturados
 
+## 🌐 Dashboard Interativo
+
+### 🚀 Deploy no Netlify
+Este projeto inclui um **dashboard web interativo** que pode ser deployado no Netlify para demonstração online dos resultados.
+
+#### 📊 Funcionalidades do Dashboard:
+- **Visualização Interativa:** Gráficos com Chart.js
+- **Design Responsivo:** Bootstrap 5 + CSS customizado
+- **Dados Dinâmicos:** Carregamento automático dos CSVs do GitHub
+- **Análise Detalhada:** Características de cada cluster
+- **Comparação de Modelos:** Métricas de performance
+
+#### 🔧 Como Deployar:
+1. Acesse [netlify.com](https://netlify.com)
+2. Conecte com o repositório GitHub
+3. Configure: **Base directory:** `dashboard`
+4. Deploy automático!
+
+📁 **Estrutura do Dashboard:**
+```
+dashboard/
+├── index.html              # Página principal
+├── js/data-loader.js       # Carregador de dados
+├── _headers                # Configurações de segurança
+└── netlify.toml           # Configuração do Netlify
+```
+
+📖 **Instruções Detalhadas:** Veja [DEPLOY_NETLIFY.md](DEPLOY_NETLIFY.md)
+
 ## 🔗 Links Úteis
 
 - [IMDb Top 250](https://www.imdb.com/chart/top/?ref_=nv_mv_250)
 - [Scikit-learn Documentation](https://scikit-learn.org/)
 - [Pandas Documentation](https://pandas.pydata.org/)
 - [BeautifulSoup Documentation](https://www.crummy.com/software/BeautifulSoup/)
+- [Netlify Documentation](https://docs.netlify.com/)
 
 ## 📄 Licença
 

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP1 Front End - Análise de Clusterização IMDb</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+        }
+        .cluster-card {
+            transition: transform 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .cluster-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        .metric-card {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        .cluster-0 { border-left: 5px solid #FF6B6B; }
+        .cluster-1 { border-left: 5px solid #4ECDC4; }
+        .cluster-2 { border-left: 5px solid #45B7D1; }
+        .cluster-3 { border-left: 5px solid #96CEB4; }
+        .cluster-4 { border-left: 5px solid #FFEAA7; }
+        .movie-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 3px solid #007bff;
+        }
+        .rating-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">
+                        <i class="fas fa-film me-3"></i>
+                        Análise de Clusterização IMDb
+                    </h1>
+                    <p class="lead mb-4">
+                        Projeto CP1 Front End - Análise dos 250 melhores filmes do IMDb usando técnicas de 
+                        Web Scraping e Clusterização KMeans
+                    </p>
+                    <div class="d-flex gap-3">
+                        <span class="badge bg-light text-dark fs-6">
+                            <i class="fas fa-user me-1"></i>
+                            Alan de Souza Maximiano da Silva
+                        </span>
+                        <span class="badge bg-light text-dark fs-6">
+                            <i class="fas fa-id-card me-1"></i>
+                            RM: 557088
+                        </span>
+                        <span class="badge bg-light text-dark fs-6">
+                            <i class="fas fa-graduation-cap me-1"></i>
+                            2TIAPY-2025
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-chart-line" style="font-size: 8rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-database me-2"></i>CP1 Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#overview">Visão Geral</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#clusters">Clusters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#comparison">Comparação</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#insights">Insights</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-chart-pie me-2"></i>
+                Visão Geral dos Resultados
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <div class="card metric-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-film fa-2x mb-3"></i>
+                            <h3 class="card-title">250</h3>
+                            <p class="card-text">Filmes Analisados</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card metric-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-layer-group fa-2x mb-3"></i>
+                            <h3 class="card-title">5</h3>
+                            <p class="card-text">Clusters Identificados</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card metric-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-star fa-2x mb-3"></i>
+                            <h3 class="card-title">8.82</h3>
+                            <p class="card-text">Rating Médio</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card metric-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-trophy fa-2x mb-3"></i>
+                            <h3 class="card-title">0.319</h3>
+                            <p class="card-text">Melhor Silhouette Score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row mt-5">
+                <div class="col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Distribuição dos Clusters
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="clusterDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Rating Médio por Cluster
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="ratingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clusters Section -->
+    <section id="clusters" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-layer-group me-2"></i>
+                Análise Detalhada dos Clusters
+            </h2>
+            
+            <div class="row">
+                <!-- Cluster 0 -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card cluster-card cluster-0">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-crown me-2"></i>
+                                Cluster 0: Épicos de Fantasia e Guerra
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Filmes:</strong> 5<br>
+                                    <strong>Rating Médio:</strong> 8.88<br>
+                                    <strong>Ano Médio:</strong> 1996
+                                </div>
+                                <div class="col-6">
+                                    <strong>Gêneros:</strong><br>
+                                    Action Epic (4)<br>
+                                    Docudrama (1)
+                                </div>
+                            </div>
+                            <h6>Filmes Principais:</h6>
+                            <div class="movie-item">
+                                <strong>O Senhor dos Anéis: O Retorno do Rei</strong>
+                                <span class="rating-badge float-end">9.0</span>
+                                <br><small class="text-muted">2003 - Action Epic</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>A Lista de Schindler</strong>
+                                <span class="rating-badge float-end">9.0</span>
+                                <br><small class="text-muted">1993 - Docudrama</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>O Senhor dos Anéis: A Sociedade do Anel</strong>
+                                <span class="rating-badge float-end">8.9</span>
+                                <br><small class="text-muted">2001 - Action Epic</small>
+                            </div>
+                            <p class="mt-3 mb-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Narrativas épicas com temas de guerra, poder e redenção
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cluster 1 -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card cluster-card cluster-1">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-fist-raised me-2"></i>
+                                Cluster 1: Dramas Intensos e Violência
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Filmes:</strong> 6<br>
+                                    <strong>Rating Médio:</strong> 8.82<br>
+                                    <strong>Ano Médio:</strong> 1986
+                                </div>
+                                <div class="col-6">
+                                    <strong>Gêneros:</strong><br>
+                                    Epic (1)<br>
+                                    Dark Comedy (1)<br>
+                                    Action Epic (1)
+                                </div>
+                            </div>
+                            <h6>Filmes Principais:</h6>
+                            <div class="movie-item">
+                                <strong>Um Sonho de Liberdade</strong>
+                                <span class="rating-badge float-end">9.3</span>
+                                <br><small class="text-muted">1994 - Epic</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>Pulp Fiction: Tempo de Violência</strong>
+                                <span class="rating-badge float-end">8.8</span>
+                                <br><small class="text-muted">1994 - Dark Comedy</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>Três Homens em Conflito</strong>
+                                <span class="rating-badge float-end">8.8</span>
+                                <br><small class="text-muted">1966 - Action Epic</small>
+                            </div>
+                            <p class="mt-3 mb-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Histórias de crime, violência e redenção pessoal
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cluster 2 -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card cluster-card cluster-2">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-brain me-2"></i>
+                                Cluster 2: Dramas Psicológicos Modernos
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Filmes:</strong> 3<br>
+                                    <strong>Rating Médio:</strong> 8.73<br>
+                                    <strong>Ano Médio:</strong> 2003
+                                </div>
+                                <div class="col-6">
+                                    <strong>Gêneros:</strong><br>
+                                    Dark Comedy (1)<br>
+                                    Action Epic (1)<br>
+                                    Period Drama (1)
+                                </div>
+                            </div>
+                            <h6>Filmes Principais:</h6>
+                            <div class="movie-item">
+                                <strong>Clube da Luta</strong>
+                                <span class="rating-badge float-end">8.8</span>
+                                <br><small class="text-muted">1999 - Dark Comedy</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>A Origem</strong>
+                                <span class="rating-badge float-end">8.8</span>
+                                <br><small class="text-muted">2010 - Action Epic</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>À Espera de um Milagre</strong>
+                                <span class="rating-badge float-end">8.6</span>
+                                <br><small class="text-muted">1999 - Period Drama</small>
+                            </div>
+                            <p class="mt-3 mb-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Narrativas complexas sobre identidade, realidade e transformação pessoal
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cluster 3 -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card cluster-card cluster-3">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-users me-2"></i>
+                                Cluster 3: Sagas Familiares e Crime
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Filmes:</strong> 7<br>
+                                    <strong>Rating Médio:</strong> 8.87<br>
+                                    <strong>Ano Médio:</strong> 1993
+                                </div>
+                                <div class="col-6">
+                                    <strong>Gêneros:</strong><br>
+                                    Epic (3)<br>
+                                    Action Epic (2)<br>
+                                    Adventure Epic (1)
+                                </div>
+                            </div>
+                            <h6>Filmes Principais:</h6>
+                            <div class="movie-item">
+                                <strong>O Poderoso Chefão</strong>
+                                <span class="rating-badge float-end">9.2</span>
+                                <br><small class="text-muted">1972 - Epic</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>Batman: O Cavaleiro das Trevas</strong>
+                                <span class="rating-badge float-end">9.1</span>
+                                <br><small class="text-muted">2008 - Action Epic</small>
+                            </div>
+                            <div class="movie-item">
+                                <strong>O Poderoso Chefão: Parte II</strong>
+                                <span class="rating-badge float-end">9.0</span>
+                                <br><small class="text-muted">1974 - Epic</small>
+                            </div>
+                            <p class="mt-3 mb-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Histórias de poder, família e transformação social
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cluster 4 -->
+                <div class="col-lg-12 mb-4">
+                    <div class="card cluster-card cluster-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-balance-scale me-2"></i>
+                                Cluster 4: Dramas Clássicos e Morais
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-3">
+                                    <strong>Filmes:</strong> 4<br>
+                                    <strong>Rating Médio:</strong> 8.70<br>
+                                    <strong>Ano Médio:</strong> 1964
+                                </div>
+                                <div class="col-3">
+                                    <strong>Gêneros:</strong><br>
+                                    Legal Drama (1)<br>
+                                    Feel-Good Romance (1)<br>
+                                    Action Epic (1)
+                                </div>
+                                <div class="col-6">
+                                    <h6>Filmes Principais:</h6>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="movie-item">
+                                                <strong>12 Homens e uma Sentença</strong>
+                                                <span class="rating-badge float-end">9.0</span>
+                                                <br><small class="text-muted">1957 - Legal Drama</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="movie-item">
+                                                <strong>A Felicidade Não se Compra</strong>
+                                                <span class="rating-badge float-end">8.6</span>
+                                                <br><small class="text-muted">1946 - Feel-Good Romance</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Temas morais, justiça e valores humanos fundamentais
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section id="comparison" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-balance-scale me-2"></i>
+                Comparação de Modelos
+            </h2>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Métricas de Comparação
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Métrica</th>
+                                            <th class="text-center">Modelo 1 (TF-IDF)</th>
+                                            <th class="text-center">Modelo 2 (Todas Features)</th>
+                                            <th class="text-center">Melhor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Silhouette Score</strong></td>
+                                            <td class="text-center">0.037</td>
+                                            <td class="text-center"><strong>0.319</strong></td>
+                                            <td class="text-center">
+                                                <span class="badge bg-success">Modelo 2</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Calinski-Harabasz Score</strong></td>
+                                            <td class="text-center">1.612</td>
+                                            <td class="text-center"><strong>24.536</strong></td>
+                                            <td class="text-center">
+                                                <span class="badge bg-success">Modelo 2</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Davies-Bouldin Score</strong></td>
+                                            <td class="text-center">2.450</td>
+                                            <td class="text-center"><strong>0.934</strong></td>
+                                            <td class="text-center">
+                                                <span class="badge bg-success">Modelo 2</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="alert alert-success mt-4">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-trophy me-2"></i>
+                                    Modelo Vencedor: Modelo 2 (Todas as Features)
+                                </h5>
+                                <p class="mb-0">
+                                    O Modelo 2 apresentou melhor performance em todas as métricas avaliadas, 
+                                    demonstrando que a inclusão de features adicionais (ano, rating, gênero) 
+                                    melhora significativamente a qualidade da clusterização.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Insights Section -->
+    <section id="insights" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-lightbulb me-2"></i>
+                Insights e Conclusões
+            </h2>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Padrões Identificados
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-clock text-primary me-2"></i>
+                                    <strong>Distribuição Temporal:</strong> Filmes recentes (1990-2010) vs clássicos (1950-1980)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-star text-warning me-2"></i>
+                                    <strong>Qualidade Consistente:</strong> Todos os clusters mantêm ratings altos (8.70-8.88)
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-film text-info me-2"></i>
+                                    <strong>Gêneros Dominantes:</strong> Action Epic e Epic aparecem em múltiplos clusters
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-book text-success me-2"></i>
+                                    <strong>Temas Distintos:</strong> Cada cluster apresenta narrativas únicas e específicas
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-rocket me-2"></i>
+                                Aplicações Práticas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-thumbs-up text-success me-2"></i>
+                                    <strong>Recomendação de Filmes:</strong> Baseada em similaridade de conteúdo
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-trending-up text-info me-2"></i>
+                                    <strong>Análise de Tendências:</strong> Identificação de padrões narrativos
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-users text-warning me-2"></i>
+                                    <strong>Segmentação de Audiência:</strong> Diferentes clusters atraem diferentes espectadores
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-search text-primary me-2"></i>
+                                    <strong>Descoberta de Conteúdo:</strong> Usuários podem encontrar filmes similares
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h5>
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        CP1 Front End - FIAP
+                    </h5>
+                    <p class="mb-0">
+                        Projeto desenvolvido por Alan de Souza Maximiano da Silva (RM: 557088)<br>
+                        Turma: 2TIAPY-2025
+                    </p>
+                </div>
+                <div class="col-lg-6 text-lg-end">
+                    <h6>Links Úteis</h6>
+                    <a href="https://github.com/alansms/CP-1_2025_2_Front-End-.git" class="text-white me-3">
+                        <i class="fab fa-github me-1"></i>GitHub
+                    </a>
+                    <a href="https://www.imdb.com/chart/top/?ref_=nv_mv_250" class="text-white">
+                        <i class="fas fa-external-link-alt me-1"></i>IMDb Top 250
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Cluster Distribution Chart
+        const clusterCtx = document.getElementById('clusterDistributionChart').getContext('2d');
+        new Chart(clusterCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Cluster 0', 'Cluster 1', 'Cluster 2', 'Cluster 3', 'Cluster 4'],
+                datasets: [{
+                    data: [5, 6, 3, 7, 4],
+                    backgroundColor: [
+                        '#FF6B6B',
+                        '#4ECDC4',
+                        '#45B7D1',
+                        '#96CEB4',
+                        '#FFEAA7'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Rating Chart
+        const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+        new Chart(ratingCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Cluster 0', 'Cluster 1', 'Cluster 2', 'Cluster 3', 'Cluster 4'],
+                datasets: [{
+                    label: 'Rating Médio',
+                    data: [8.88, 8.82, 8.73, 8.87, 8.70],
+                    backgroundColor: [
+                        '#FF6B6B',
+                        '#4ECDC4',
+                        '#45B7D1',
+                        '#96CEB4',
+                        '#FFEAA7'
+                    ],
+                    borderColor: [
+                        '#FF5252',
+                        '#26A69A',
+                        '#2196F3',
+                        '#66BB6A',
+                        '#FFCA28'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 8.5,
+                        max: 9.0
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
