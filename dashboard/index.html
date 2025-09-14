@@ -205,118 +205,34 @@
             transform: translateY(0);
         }
 
-        /* Card do participante */
-        .participant-card {
-            margin: 2rem 0;
-            max-width: 500px;
+        /* Informações do participante - design discreto */
+        .participant-info-simple {
+            margin: 1.5rem 0;
         }
 
-        .participant-link {
-            display: flex;
-            align-items: center;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
+        .participant-link-simple {
             text-decoration: none;
             color: inherit;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: color 0.3s ease;
         }
 
-        .participant-link:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            border-color: #3b82f6;
+        .participant-link-simple:hover {
+            color: #3b82f6;
             text-decoration: none;
-            color: inherit;
         }
 
-        .participant-avatar {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1.5rem;
-            flex-shrink: 0;
+        .participant-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
-        .participant-avatar i {
-            font-size: 1.5rem;
-            color: white;
+        .participant-line {
+            margin-bottom: 0.25rem;
         }
 
-        .participant-info {
-            flex: 1;
-        }
-
-        .participant-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .participant-details {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .participant-rm,
-        .participant-class {
-            display: flex;
-            align-items: center;
-            font-size: 0.875rem;
-            color: #6b7280;
-            background: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .participant-github {
-            display: flex;
-            align-items: center;
-            font-size: 0.875rem;
-            color: #3b82f6;
-            font-weight: 500;
-        }
-
-        .participant-arrow {
-            color: #9ca3af;
-            font-size: 1.25rem;
-            margin-left: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .participant-link:hover .participant-arrow {
-            color: #3b82f6;
-            transform: translateX(3px);
-        }
-
-        @media (max-width: 768px) {
-            .participant-details {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .participant-link {
-                padding: 1rem;
-            }
-            
-            .participant-avatar {
-                width: 50px;
-                height: 50px;
-                margin-right: 1rem;
-            }
-            
-            .participant-name {
-                font-size: 1.1rem;
-            }
+        .participant-line:last-child {
+            margin-bottom: 0;
         }
 
         .header-content {
@@ -667,31 +583,13 @@
                         <h1 class="page-title">Análise de Clusterização IMDb</h1>
                         <p class="page-subtitle">Projeto CP1 Front End - Análise dos 250 melhores filmes do IMDb usando técnicas de Web Scraping e Clusterização KMeans</p>
                         
-                        <!-- Participant Info Card -->
-                        <div class="participant-card">
-                            <a href="https://github.com/alansms" target="_blank" class="participant-link" title="Visitar perfil no GitHub">
-                                <div class="participant-avatar">
-                                    <i class="fab fa-github"></i>
-                                </div>
-                                <div class="participant-info">
-                                    <h5 class="participant-name">Alan de Souza Maximiano da Silva</h5>
-                                    <div class="participant-details">
-                                        <span class="participant-rm">
-                                            <i class="fas fa-id-card me-1"></i>
-                                            RM: 557088
-                                        </span>
-                                        <span class="participant-class">
-                                            <i class="fas fa-graduation-cap me-1"></i>
-                                            2TIAPY-2025
-                                        </span>
-                                    </div>
-                                    <div class="participant-github">
-                                        <i class="fab fa-github me-1"></i>
-                                        @alansms
-                                    </div>
-                                </div>
-                                <div class="participant-arrow">
-                                    <i class="fas fa-external-link-alt"></i>
+                        <!-- Participant Info -->
+                        <div class="participant-info-simple">
+                            <a href="https://github.com/alansms" target="_blank" class="participant-link-simple" title="Visitar perfil no GitHub">
+                                <div class="participant-text">
+                                    <div class="participant-line">Alan de Souza Maximiano da Silva</div>
+                                    <div class="participant-line">RM: 557088 • 2TIAPY-2025</div>
+                                    <div class="participant-line">Front End & Mobile Development</div>
                                 </div>
                             </a>
                         </div>
