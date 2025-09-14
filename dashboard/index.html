@@ -170,6 +170,41 @@
             font-weight: 500;
         }
 
+        /* Cards clicáveis */
+        .clickable-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .clickable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .clickable-card:hover .metric-value {
+            color: #1d4ed8;
+        }
+
+        .card-hint {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(29, 78, 216, 0.9);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .clickable-card:hover .card-hint {
+            transform: translateY(0);
+        }
+
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -538,27 +573,39 @@
                 <!-- Metrics -->
                 <div class="row mb-4">
                     <div class="col-md-3 mb-3">
-                        <div class="metric-card">
+                        <div class="metric-card clickable-card" onclick="showMoviesList()" title="Clique para ver lista de filmes">
                             <div class="metric-value" id="total-movies">250</div>
                             <div class="metric-label">Filmes Analisados</div>
+                            <div class="card-hint">
+                                <i class="fas fa-mouse-pointer"></i> Clique para ver lista
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="metric-card">
+                        <div class="metric-card clickable-card" onclick="showClustersDetails()" title="Clique para ver detalhes dos clusters">
                             <div class="metric-value" id="total-clusters">5</div>
                             <div class="metric-label">Clusters Identificados</div>
+                            <div class="card-hint">
+                                <i class="fas fa-mouse-pointer"></i> Clique para ver detalhes
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="metric-card">
+                        <div class="metric-card clickable-card" onclick="showSilhouetteInfo()" title="Clique para ver informações sobre Silhouette Score">
                             <div class="metric-value" id="silhouette-score">0.037</div>
                             <div class="metric-label">Silhouette Score</div>
+                            <div class="card-hint">
+                                <i class="fas fa-mouse-pointer"></i> Clique para ver info
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="metric-card">
+                        <div class="metric-card clickable-card" onclick="showModelComparison()" title="Clique para ver comparação de modelos">
                             <div class="metric-value" id="best-model">Modelo 1</div>
                             <div class="metric-label">Melhor Modelo</div>
+                            <div class="card-hint">
+                                <i class="fas fa-mouse-pointer"></i> Clique para comparar
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -771,6 +818,147 @@
                 </div>
                 <div class="modal-body">
                     <div id="filtered-movies"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movies List Modal -->
+    <div class="modal fade" id="moviesListModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-film me-2"></i>
+                        Lista Completa de Filmes Analisados
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="movies-list-content">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <p class="mt-2">Carregando lista de filmes...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clusters Details Modal -->
+    <div class="modal fade" id="clustersDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-list me-2"></i>
+                        Detalhes Completos dos Clusters
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="clusters-details-content">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <p class="mt-2">Carregando detalhes dos clusters...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Silhouette Score Info Modal -->
+    <div class="modal fade" id="silhouetteInfoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Silhouette Score - Informações
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>O que é o Silhouette Score?</h6>
+                        <p>O Silhouette Score é uma métrica que avalia a qualidade da clusterização, medindo quão bem cada objeto se ajusta ao seu cluster em comparação com outros clusters.</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Interpretação dos Valores:</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>1.0 - 0.7</span>
+                                    <span class="badge bg-success">Excelente</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>0.7 - 0.5</span>
+                                    <span class="badge bg-primary">Bom</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>0.5 - 0.2</span>
+                                    <span class="badge bg-warning">Razoável</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>0.2 - 0.0</span>
+                                    <span class="badge bg-danger">Ruim</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Nosso Resultado:</h6>
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h3 class="text-warning">0.037</h3>
+                                    <p class="mb-0">Indica que os clusters não estão bem separados. Isso pode ser devido à natureza complexa dos dados de filmes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Comparison Modal -->
+    <div class="modal fade" id="modelComparisonModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-balance-scale me-2"></i>
+                        Comparação Detalhada de Modelos
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="model-comparison-content">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <p class="mt-2">Carregando comparação de modelos...</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -1022,8 +1210,170 @@
             });
         });
 
-        // Expor função globalmente para debug
+        // Funções para abrir modais dos cards
+        function showMoviesList() {
+            const modal = new bootstrap.Modal(document.getElementById('moviesListModal'));
+            const content = document.getElementById('movies-list-content');
+            
+            // Carregar lista de filmes
+            if (window.dashboardData && window.dashboardData.movies) {
+                let html = '<div class="row">';
+                window.dashboardData.movies.forEach((movie, index) => {
+                    html += `
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">${movie.title_en}</h6>
+                                    <p class="card-text">
+                                        <small class="text-muted">${movie.year}</small><br>
+                                        <span class="badge bg-primary">Cluster ${movie.cluster}</span>
+                                        <span class="badge bg-success ms-1">${movie.rating}</span>
+                                    </p>
+                                    <p class="card-text"><small>${movie.genre}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                content.innerHTML = html;
+            } else {
+                content.innerHTML = '<div class="alert alert-warning">Dados não disponíveis. Execute a análise primeiro.</div>';
+            }
+            
+            modal.show();
+        }
+
+        function showClustersDetails() {
+            const modal = new bootstrap.Modal(document.getElementById('clustersDetailsModal'));
+            const content = document.getElementById('clusters-details-content');
+            
+            // Carregar detalhes dos clusters
+            if (window.dashboardData && window.dashboardData.clusters) {
+                let html = '<div class="row">';
+                window.dashboardData.clusters.forEach(cluster => {
+                    html += `
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Cluster ${cluster.cluster}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="metric-item">
+                                                <div class="metric-value">${cluster.Num_Filmes}</div>
+                                                <div class="metric-label">Filmes</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="metric-item">
+                                                <div class="metric-value">${cluster.Rating_Medio}</div>
+                                                <div class="metric-label">Rating</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="metric-item">
+                                                <div class="metric-value">${cluster.Ano_Medio}</div>
+                                                <div class="metric-label">Ano</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <p><strong>Gênero Principal:</strong> ${cluster.Genero_Principal}</p>
+                                    <p><strong>Top Filmes:</strong></p>
+                                    <ul class="list-unstyled">
+                                        <li>• ${cluster.Top_Filme_1}</li>
+                                        <li>• ${cluster.Top_Filme_2}</li>
+                                        <li>• ${cluster.Top_Filme_3}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                content.innerHTML = html;
+            } else {
+                content.innerHTML = '<div class="alert alert-warning">Dados não disponíveis. Execute a análise primeiro.</div>';
+            }
+            
+            modal.show();
+        }
+
+        function showSilhouetteInfo() {
+            const modal = new bootstrap.Modal(document.getElementById('silhouetteInfoModal'));
+            modal.show();
+        }
+
+        function showModelComparison() {
+            const modal = new bootstrap.Modal(document.getElementById('modelComparisonModal'));
+            const content = document.getElementById('model-comparison-content');
+            
+            // Carregar comparação de modelos
+            if (window.dashboardData && window.dashboardData.comparison) {
+                let html = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Modelo 1 (TF-IDF)</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <h3 class="text-primary">0.037</h3>
+                                        <p class="text-muted">Silhouette Score</p>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Baseado apenas em sinopses</li>
+                                        <li class="list-group-item">Processamento de texto</li>
+                                        <li class="list-group-item">Clusters menos definidos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Modelo 2 (Todas Features)</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <h3 class="text-success">0.319</h3>
+                                        <p class="text-muted">Silhouette Score</p>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Inclui rating, ano, gênero</li>
+                                        <li class="list-group-item">Features complementares</li>
+                                        <li class="list-group-item">Clusters mais coesos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-success">
+                                <h6><i class="fas fa-trophy me-2"></i>Conclusão</h6>
+                                <p class="mb-0">O <strong>Modelo 2</strong> apresenta melhor performance com Silhouette Score de 0.319, indicando clusters mais bem definidos e separados.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                content.innerHTML = html;
+            } else {
+                content.innerHTML = '<div class="alert alert-warning">Dados não disponíveis. Execute a análise primeiro.</div>';
+            }
+            
+            modal.show();
+        }
+
+        // Expor funções globalmente
         window.forceLoadData = forceLoadData;
+        window.showMoviesList = showMoviesList;
+        window.showClustersDetails = showClustersDetails;
+        window.showSilhouetteInfo = showSilhouetteInfo;
+        window.showModelComparison = showModelComparison;
     </script>
 </body>
 </html>
