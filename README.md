@@ -12,7 +12,7 @@
 
 Este projeto implementa técnicas de **Web Scraping** e **Clusterização KMeans** para análise dos 250 melhores filmes do IMDb, comparando diferentes abordagens de modelagem e extraindo insights sobre padrões cinematográficos.
 
-###Aplicação On-Line
+### Aplicação On-Line
 
 ![NovoTela](NovoTela.gif)
 
