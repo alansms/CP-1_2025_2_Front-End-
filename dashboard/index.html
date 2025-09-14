@@ -47,6 +47,23 @@
             transition: all 0.3s ease;
         }
 
+        /* Efeito de brilho piscante para o logo */
+        .logo img {
+            animation: glowPulse 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+        }
+
+        @keyframes glowPulse {
+            0% {
+                filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+                transform: scale(1);
+            }
+            100% {
+                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4));
+                transform: scale(1.02);
+            }
+        }
+
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -57,19 +74,13 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-weight: 600;
-            color: var(--text-primary);
             text-decoration: none;
         }
 
-        .logo i {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
+        .logo-img {
+            height: 40px;
+            width: auto;
+            max-width: 200px;
         }
 
         .nav-links {
@@ -374,8 +385,7 @@
         <div class="container">
             <div class="header-content">
                 <a href="#" class="logo">
-                    <i class="fas fa-chart-line"></i>
-                    <span class="logo-text">CP1 Dashboard</span>
+                    <img src="Fiap-logo-branco.jpg" alt="FIAP Logo" class="logo-img">
                 </a>
                 <nav class="nav-links">
                     <a href="#overview" onclick="scrollToSection('overview')">Visão Geral</a>
