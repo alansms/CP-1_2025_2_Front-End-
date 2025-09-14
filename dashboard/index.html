@@ -37,6 +37,15 @@
             padding: 1rem 0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+        
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
 
         .header-content {
             display: flex;
@@ -98,6 +107,7 @@
         /* Main content */
         .main-content {
             padding: 2rem 0;
+            margin-top: 80px; /* Compensar header fixo */
         }
 
         .page-title {
@@ -360,7 +370,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header class="header sticky-header">
         <div class="container">
             <div class="header-content">
                 <a href="#" class="logo">
@@ -375,10 +385,6 @@
                     <button class="btn btn-execute" onclick="executeAnalysis()">
                         <i class="fas fa-play me-1"></i>
                         Executar Análise
-                    </button>
-                    <button class="btn btn-outline-secondary ms-2" onclick="debugData()">
-                        <i class="fas fa-bug me-1"></i>
-                        Debug
                     </button>
                 </nav>
             </div>
@@ -545,8 +551,8 @@
 
                 <!-- Model Comparison Chart -->
                 <div class="row mb-4">
-                    <div class="col-lg-8 mb-4">
-                        <div class="card">
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">
                                     <i class="fas fa-chart-line"></i>
@@ -558,8 +564,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 mb-4">
-                        <div class="card">
+                    <div class="col-lg-6 mb-4">
+                        <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title">
                                     <i class="fas fa-trophy"></i>
@@ -882,25 +888,8 @@
             });
         });
 
-        // Função de debug
-        function debugData() {
-            console.log('=== DEBUG INFO ===');
-            console.log('Chart.js disponível:', typeof Chart !== 'undefined');
-            console.log('Dados carregados:', window.dashboardData);
-            console.log('DataLoader disponível:', window.dataLoader);
-            console.log('Elementos DOM:');
-            console.log('- clusterChart:', document.getElementById('clusterChart'));
-            console.log('- modelChart:', document.getElementById('modelChart'));
-            console.log('- cluster-details:', document.getElementById('cluster-details'));
-            
-            // Testar carregamento manual
-            console.log('Testando carregamento manual...');
-            loadData();
-        }
-
-        // Expor funções globalmente para debug
+        // Expor função globalmente para debug
         window.forceLoadData = forceLoadData;
-        window.debugData = debugData;
     </script>
 </body>
 </html>
